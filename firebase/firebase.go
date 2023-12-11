@@ -7,14 +7,16 @@ import (
 	googlefirebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
 	"firebase.google.com/go/db"
+	"firebase.google.com/go/messaging"
 	"firebase.google.com/go/storage"
 	"google.golang.org/api/option"
 )
 
 type Firebase struct {
-	Auth     *auth.Client
-	Database *db.Client
-	Storage  *storage.Client
+	Auth      *auth.Client
+	Database  *db.Client
+	Storage   *storage.Client
+	Messaging *messaging.Client
 }
 
 func NewFirebase(config *Config) (*Firebase, error) {
@@ -46,10 +48,16 @@ func NewFirebase(config *Config) (*Firebase, error) {
 		return nil, err
 	}
 
+	m, err := app.Messaging(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	f := Firebase{
-		Auth:     a,
-		Database: d,
-		Storage:  s,
+		Auth:      a,
+		Database:  d,
+		Storage:   s,
+		Messaging: m,
 	}
 
 	return &f, nil
