@@ -3,6 +3,7 @@ module github.com/studiobflat/tsj
 go 1.20
 
 require (
+	cloud.google.com/go/storage v1.30.1
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/ThreeDotsLabs/watermill v1.2.0
 	github.com/ThreeDotsLabs/watermill-redisstream v1.2.2
@@ -32,7 +33,6 @@ require (
 	cloud.google.com/go/firestore v1.13.0 // indirect
 	cloud.google.com/go/iam v1.1.2 // indirect
 	cloud.google.com/go/longrunning v0.5.1 // indirect
-	cloud.google.com/go/storage v1.30.1 // indirect
 	github.com/Rican7/retry v0.3.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
