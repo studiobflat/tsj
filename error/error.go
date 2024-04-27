@@ -1,6 +1,7 @@
 package error
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -13,7 +14,7 @@ type Error struct {
 }
 
 func (e *Error) Error() string {
-	return e.HTTPError.Error()
+	return fmt.Sprintf("%v", e.HTTPError.Message)
 }
 
 func InternalServerError(err error) error {
