@@ -56,6 +56,7 @@ func Wrapper[TREQ any](wrapped func(vndcontext.VndContext, *TREQ) (*Result, erro
 
 		res, err := wrapped(vndc, &req)
 		if err != nil {
+			log.Errorw("equest end with error", "request_id", requestId, "at", time.Now().Format(time.RFC3339), "err", err)
 			return err
 		}
 
