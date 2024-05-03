@@ -9,7 +9,7 @@ import (
 	echolog "github.com/labstack/gommon/log"
 	"github.com/studiobflat/tsj/esrv"
 	"github.com/studiobflat/tsj/logger"
-	"github.com/studiobflat/tsj/mdw"
+	tsjmiddleware "github.com/studiobflat/tsj/middleware"
 	"github.com/studiobflat/tsj/msrv"
 	"github.com/studiobflat/tsj/rest"
 	"github.com/studiobflat/tsj/rvd"
@@ -34,10 +34,10 @@ func buildRestServer(c *esrv.Config, rn *Runner, rsh RestServerHook) (*echo.Echo
 
 	e.HideBanner = true
 	e.Validator = rvd.DefaultRestValidator()
-	e.HTTPErrorHandler = mdw.ErrorHandler(e.DefaultHTTPErrorHandler)
+	e.HTTPErrorHandler = tsjmiddleware.ErrorHandler(e.DefaultHTTPErrorHandler)
 
 	e.Pre(echoprometheus.NewMiddleware(""))
-	e.Use(mdw.RequestLogger(logger.GetLogger("request_info").Desugar(), rest.RestLogFieldExtractor))
+	e.Use(tsjmiddleware.RequestLogger(logger.GetLogger("request_info").Desugar(), rest.RestLogFieldExtractor))
 	e.Use(middleware.BodyLimit(c.BodyLimit))
 
 	if c.EnableCors {
@@ -86,7 +86,7 @@ func buildMonitorService(rn *Runner, config *msrv.Config, msh MonitorServerHook)
 	log := logger.GetLogger("monitor_echo")
 	log.LogLevel(zapcore.ErrorLevel) // only show error for /metrics,/status,etc...
 
-	e.Use(mdw.RequestLogger(log.Desugar()))
+	e.Use(tsjmiddleware.RequestLogger(log.Desugar()))
 	e.Use(middleware.RecoverWithConfig(middleware.RecoverConfig{
 		StackSize: 1 << 10, // 1 KB
 		LogLevel:  echolog.ERROR,

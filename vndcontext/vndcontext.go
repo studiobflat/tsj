@@ -6,7 +6,7 @@ import (
 	"reflect"
 
 	"github.com/labstack/echo/v4"
-	"github.com/studiobflat/tsj/mdw"
+	tsjmiddleware "github.com/studiobflat/tsj/middleware"
 )
 
 type VndContext interface {
@@ -25,7 +25,7 @@ func (c *VContext) RequestContext() context.Context {
 }
 
 func (c *VContext) RequestId() string {
-	id := c.Get(mdw.RequestIDContextKey)
+	id := c.Get(tsjmiddleware.RequestIDContextKey)
 	if id != nil && reflect.TypeOf(id).Name() == "string" {
 		return id.(string)
 	}
@@ -39,7 +39,7 @@ func (c *VContext) RequestId() string {
 }
 
 func (c *VContext) UserId() (string, error) {
-	id := c.Get(mdw.UserIDContextKey)
+	id := c.Get(tsjmiddleware.UserIDContextKey)
 	if id != nil && reflect.TypeOf(id).Name() == "string" {
 		return id.(string), nil
 	}
