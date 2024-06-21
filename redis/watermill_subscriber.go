@@ -2,8 +2,6 @@ package redis
 
 import (
 	"context"
-	"time"
-
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/studiobflat/tsj/event"
 	"github.com/studiobflat/tsj/logger"
@@ -76,19 +74,12 @@ func (r *WatermillSubscriber) Topic() string {
 }
 
 func (r *WatermillSubscriber) consumeMessage(ctx context.Context, msg *message.Message) error {
-	log := logger.GetLogger("")
+	log := logger.GetLogger("consumeMessage")
 	defer log.Sync()
 
-	defer func(start time.Time) {
-		log.Infow("consume message completed", "elapsed", time.Since(start))
-	}(time.Now())
-
-	log.Debugw("consume message start")
-	if err := r.consumeFunc(ctx, event.EventString(string(msg.Payload))); err != nil {
-		msg.Ack()
-		return err
+	err := r.consumeFunc(ctx, event.EventString(string(msg.Payload)))
+	if !msg.Ack() {
+		log.Infow("message is already ack", "message", msg.UUID)
 	}
-
-	msg.Ack()
-	return nil
+	return err
 }
