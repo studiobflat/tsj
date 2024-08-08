@@ -38,3 +38,20 @@ func CallAny[REQ any](e vndcontext.VndContext, req *REQ, name string, delegate C
 
 	return delegate(log, e, req)
 }
+
+type CallDelegateSSE[REQ any] func(*logger.Logger, vndcontext.VndContext, *REQ) error
+
+func CallSSE[REQ any](e vndcontext.VndContext, req *REQ, name string, delegate CallDelegateSSE[REQ]) error {
+	log := logger.GetLogger(name)
+	defer func() {
+		log.Infow("completed")
+		log.Sync()
+	}()
+
+	requestId := e.RequestId()
+	log.With([]interface{}{
+		"request_id", requestId,
+	}...)
+
+	return delegate(log, e, req)
+}

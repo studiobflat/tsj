@@ -131,3 +131,55 @@ func WrapperAny[TREQ any](wrapped func(vndcontext.VndContext, *TREQ) (any, error
 		return c.JSON(http.StatusOK, res)
 	}
 }
+
+func WrapperSSE[TREQ any](wrapped func(vndcontext.VndContext, *TREQ) error) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		log := logger.GetLogger("Wrapper")
+		defer log.Sync()
+
+		vndc := c.(*vndcontext.VContext)
+		requestId := vndc.RequestId()
+		handler := runtime.FuncForPC(reflect.ValueOf(wrapped).Pointer()).Name()
+		log.Infow("request begin",
+			"request_id", requestId,
+			"at", time.Now().Format(time.RFC3339),
+			"path", c.Request().RequestURI,
+			"handler", handler,
+		)
+
+		var req TREQ
+		if err := c.Bind(&req); err != nil {
+			log.Errorw("fail to bind request", "request_uri", c.Request().RequestURI, "err", err)
+			return &vnderror.Error{
+				CustomCode: -40001,
+				HTTPError: &echo.HTTPError{
+					Code:    http.StatusBadRequest,
+					Message: "invalid request",
+				},
+			}
+		}
+
+		if err := c.Validate(&req); err != nil {
+			log.Errorw("fail to validate request", "request_uri", c.Request().RequestURI, "request_object", req, "err", err)
+			return &vnderror.Error{
+				CustomCode: -40002,
+				HTTPError: &echo.HTTPError{
+					Code:    http.StatusBadRequest,
+					Message: "invalid request",
+				},
+			}
+		}
+
+		c.Set(RequestObjectContextKey, req)
+
+		err := wrapped(vndc, &req)
+		if err != nil {
+			log.Errorw("request end with error", "request_id", requestId, "at", time.Now().Format(time.RFC3339), "err", err)
+			return err
+		}
+
+		log.Infow("request end", "request_id", requestId, "at", time.Now().Format(time.RFC3339), "status", http.StatusOK)
+
+		return nil
+	}
+}
