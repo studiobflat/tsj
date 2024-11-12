@@ -3,8 +3,9 @@ package redis
 import "github.com/caarlos0/env/v9"
 
 type PubConfig struct {
-	LoggerDebug bool `env:"REDIS_PUB_SUB_LOGGER_DEBUG,notEmpty" envdefault:"false"`
-	LoggerTrace bool `env:"REDIS_PUB_SUB_LOGGER_TRACE,notEmpty" envdefault:"false"`
+	LoggerDebug      bool  `env:"REDIS_PUB_SUB_LOGGER_DEBUG,notEmpty" envdefault:"false"`
+	LoggerTrace      bool  `env:"REDIS_PUB_SUB_LOGGER_TRACE,notEmpty" envdefault:"false"`
+	MaxStreamEntries int64 `env:"REDIS_MAX_STREAM_ENTRIES" envDefault:"200"`
 }
 
 func NewPubConfig() (*PubConfig, error) {

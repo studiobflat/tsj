@@ -1,6 +1,9 @@
 package redis
 
 import (
+	"context"
+	"time"
+
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/studiobflat/tsj/publisher"
@@ -21,16 +24,24 @@ func (w *WatermillPublisher) Close() error {
 }
 
 func (w *WatermillPublisher) PublishMessage(messages ...string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(time.Second*5))
+	defer cancel()
+
 	msgs := make([]*message.Message, 0)
 
 	for _, v := range messages {
 		msgs = append(msgs, message.NewMessage(watermill.NewUUID(), []byte(v)))
 	}
 
-	return w.pub.Publish(
-		w.pub.Topic(),
-		msgs...,
-	)
+	if err := w.pub.Client().XTrimMaxLen(ctx, w.pub.Topic(), w.pub.MaxStreamEntries()).Err(); err != nil {
+		return err
+	}
+
+	if err := w.pub.Publish(w.pub.Topic(), msgs...); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (w *WatermillPublisher) Topic() string {
