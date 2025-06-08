@@ -2,8 +2,9 @@ package postgres
 
 import (
 	"context"
-
+	pgxdecimal "github.com/jackc/pgx-shopspring-decimal"
 	"github.com/jackc/pgx-zap"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/tracelog"
 	"github.com/studiobflat/tsj/logger"
@@ -25,9 +26,19 @@ func NewPostgres(config *Config) (*Postgres, error) {
 	}
 
 	pgConfig.MaxConns = config.MaxConnection
+
 	pgConfig.MinConns = config.MinConnection
+
 	pgConfig.MaxConnIdleTime = config.MaxConnectionIdleTime
+
 	pgConfig.ConnConfig.Tracer = tracer
+
+	pgConfig.AfterConnect = func(ctx context.Context, conn *pgx.Conn) error {
+		// Register the decimal type
+		pgxdecimal.Register(conn.TypeMap())
+
+		return nil
+	}
 
 	pool, err := pgxpool.NewWithConfig(context.Background(), pgConfig)
 	if err != nil {
