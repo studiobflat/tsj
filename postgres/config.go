@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/caarlos0/env/v9"
+	"github.com/caarlos0/env/v11"
 	"github.com/jackc/pgx/v5/tracelog"
 )
 

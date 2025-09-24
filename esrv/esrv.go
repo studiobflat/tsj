@@ -2,7 +2,6 @@ package esrv
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -59,6 +58,6 @@ func (es *Esrv) Shutdown() {
 	defer cancel()
 
 	if err := es.h.Shutdown(ctx); err != nil {
-		log.Error(fmt.Sprintf("could not gracefully shut down web server. error: %s" + err.Error()))
+		log.Errorw("could not gracefully shut down web server", "error", err)
 	}
 }

@@ -1,6 +1,6 @@
 package firebase
 
-import "github.com/caarlos0/env/v9"
+import "github.com/caarlos0/env/v11"
 
 type Config struct {
 	CredentialsFile string `env:"FIREBASE_CREDENTIALS_FILE,required"`

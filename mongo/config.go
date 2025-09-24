@@ -1,6 +1,6 @@
 package mongo
 
-import "github.com/caarlos0/env/v9"
+import "github.com/caarlos0/env/v11"
 
 type Config struct {
 	Uri         string `env:"MONGO_URI,required"`

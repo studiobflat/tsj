@@ -3,7 +3,7 @@ package redis
 import (
 	"time"
 
-	"github.com/caarlos0/env/v9"
+	"github.com/caarlos0/env/v11"
 )
 
 type Config struct {

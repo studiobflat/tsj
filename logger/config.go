@@ -3,7 +3,7 @@ package logger
 import (
 	"fmt"
 
-	"github.com/caarlos0/env/v9"
+	"github.com/caarlos0/env/v11"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

@@ -1,6 +1,6 @@
 package redis
 
-import "github.com/caarlos0/env/v9"
+import "github.com/caarlos0/env/v11"
 
 type SubConfig struct {
 	PubConfig

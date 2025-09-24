@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	mongod "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
+	mongod "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/mongo/readpref"
 )
 
 type Mongo struct {
@@ -22,7 +22,7 @@ func NewMongo(config *Config) (*Mongo, error) {
 		SetMaxPoolSize(config.MaxPoolSize).
 		SetMinPoolSize(config.MinPoolSize)
 
-	client, err := mongod.Connect(ctx, opts)
+	client, err := mongod.Connect(opts)
 	if err != nil {
 		return nil, err
 	}
